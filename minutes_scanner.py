@@ -248,6 +248,12 @@ class MinutesScanner(scanner.Scanner):
     |
         # Words with a single embedded non-word character
         \w+([^\w\s\n]\w+)*
+    |
+        # Separators that do not require a space
+        --
+    |
+        # Money
+        \$\d+(?:\.\d+)?
     '''
 
     list_sep = r'''
