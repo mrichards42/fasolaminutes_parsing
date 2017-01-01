@@ -266,5 +266,5 @@ class MinutesScanner(scanner.Scanner):
 
     space = r'[^\S\n]+'
 
-    anything = r'[^\s.;!?]+'
+    anything = r'[^\s.;!?\w]+|\w'
 
