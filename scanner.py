@@ -97,7 +97,7 @@ class Scanner(object):
 
         # TODO: can probably get rid of capture numbers and use m.start()
         pattern = regex.sub(r'{{([^:}]+):?([^}]*)}}|<([^>]+)>', do_replace, pattern)
-        return regex.compile(pattern, regex.X)
+        return regex.compile(pattern, regex.X | regex.U)
 
     def __new__(cls):
         # Get patterns and do {{ }} replacements
@@ -124,7 +124,7 @@ class Scanner(object):
         # Compile each pattern
         for pattern, name in token_name.iteritems():
             try:
-                setattr(cls, name, regex.compile(pattern, regex.X))
+                setattr(cls, name, regex.compile(pattern, regex.X | regex.U))
             except regex.error as e:
                 print e
                 print name
@@ -132,7 +132,7 @@ class Scanner(object):
         # Compile the full scanner
         try:
             big_re = '|'.join(big_re)
-            cls._scanner = regex.compile(big_re, regex.X)
+            cls._scanner = regex.compile(big_re, regex.X | regex.U)
         except regex.error as e:
             print e
             print(big_re)
