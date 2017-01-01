@@ -44,6 +44,7 @@ class MinutesScanner(scanner.Scanner):
             cls.paragraph,
             cls.space,
             cls.session,
+            cls.ignore_song,
             cls.song,
             cls.role,
             cls.leader_list,
@@ -185,6 +186,10 @@ class MinutesScanner(scanner.Scanner):
         (?P<book>
             (?: [A-Z]\w+ \s* )+
         )
+    '''
+
+    ignore_song = r'''
+            (?:report\w*)\s+
     '''
 
     #=========================================================================#

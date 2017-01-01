@@ -13,19 +13,22 @@ def parse(text, song_title=False, breaks=False):
     """
     leads = []
     last_leader = None
-    ignore_next = False
+    ignore_leader = False
+    ignore_song = False
     officers = {}
     for token in scanner.tokenize(text):
         if token.name == 'leader_list':
             if '_next' in officers:
                 name = officers.pop('_next')
                 officers[name] = token.all('leader')
-            if not ignore_next:
-                last_leader = token
+            if ignore_leader:
+                print "IGNORED (LEADER): ",token
             else:
-                print "IGNORED: ",token
+                last_leader = token
         elif token.name == 'song':
-            if last_leader:
+            if ignore_song:
+                print "IGNORED (SONG): ",token
+            elif last_leader:
                 book = get_book_abbr(token.first('book'))
                 song = token.first('number')
                 if song and not book:
@@ -51,10 +54,14 @@ def parse(text, song_title=False, breaks=False):
             officers['_next'] = token.text
         # Check ignore flag
         if token.name == 'ignore_leader':
-            ignore_next = True
-            print "IGNORE"
-        elif token.name != 'space':
-            ignore_next = False
+            ignore_leader = True
+            print "IGNORE LEADER"
+        if token.name == 'ignore_song':
+            ignore_song = True
+            print "IGNORE SONG"
+        elif token.name in ('sentence', 'paragraph', 'session'):
+            ignore_leader = False
+            ignore_song = False
     return leads
 
 
