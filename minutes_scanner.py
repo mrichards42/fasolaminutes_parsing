@@ -137,7 +137,19 @@ class MinutesScanner(scanner.Scanner):
     '''
 
     ignore_leader = r'''
-        (for|in\ memory\ of|in\ honor\ of)
+            (?:
+                in\ memory\ of
+            |
+                in\ remembrance\ of
+            |
+                in\ honor\ of
+            |
+                on\ behalf\ of
+            |
+                for\ the\ following
+            ):?\s+
+        |
+            for\s+(?={{name}})
     '''
 
     #=========================================================================#
