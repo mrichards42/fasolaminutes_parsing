@@ -8,7 +8,7 @@ scanner = MinutesScanner()
 def parse(text, song_title=False, breaks=False):
     """Parse minutes text.
     
-    Returns a list of leaders and songs
+    Returns list of leads, list of tokens
     
     """
     leads = []
@@ -16,7 +16,9 @@ def parse(text, song_title=False, breaks=False):
     ignore_leader = False
     ignore_song = False
     officers = {}
+    tokens = []
     for token in scanner.tokenize(text):
+        tokens.append(token)
         if token.name == 'leader_list':
             if '_next' in officers:
                 name = officers.pop('_next')
@@ -41,13 +43,13 @@ def parse(text, song_title=False, breaks=False):
                     if book:
                         song = book + ' ' + song
                     for leader in last_leader.all('leader'):
-                        leads.append({'leader':leader, 'song': song})
+                        leads.append({'leader':leader, 'song': song, 'leader_token': last_leader, 'song_token': token})
                 else:
                     print "MISSING_SONG", token.captures
             else:
                 print 'MISSING_LEADER', token.captures
         elif token.name == 'session' and breaks:
-                leads.append({'leader': token.text, 'song': 'BREAK'})
+                leads.append({'leader': token.text, 'leader_token': token, 'song': 'BREAK'})
         elif token.name in ('paragraph', 'sentence'):
             last_leader = None
         elif token.name == 'role':
@@ -62,7 +64,7 @@ def parse(text, song_title=False, breaks=False):
         elif token.name in ('sentence', 'paragraph', 'session'):
             ignore_leader = False
             ignore_song = False
-    return leads
+    return leads, tokens
 
 
 SONGS = None

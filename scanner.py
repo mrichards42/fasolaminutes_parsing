@@ -36,7 +36,7 @@ class Token(object):
                 continue
             pat = regex.compile('(' + '|'.join(regex.escape(v) for v in values) + r')')
             text = pat.sub(r'<span class="%s">\1</span>' % key, text)
-        return '<span class="%s">%s</span>' % (self.name, text)
+        return '<span id="token-%s" class="%s">%s</span>' % (id(self), self.name, text)
 
 
 class Scanner(object):
