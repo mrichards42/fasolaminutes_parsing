@@ -60,44 +60,44 @@ class MinutesScanner(scanner.Scanner):
     #=========================================================================#
 
     leader_list = r'''
-        {{leader}} (?: {{list_sep}} \s+ {{leader}} )*
+        {{leader}} (?: {{list_sep}} [ \t]+ {{leader}} )*
     '''
 
     leader = r'''
-        (?: {{name_prefix}} \s+)?        # Throw away name prefix
+        (?: {{name_prefix}} [ \t]+)?     # Throw away name prefix
         (?P<first>{{first_name}})        # first name
         (?:
-            {{list_sep}} \s+
-            (?: {{name_prefix}} \s+)?
+            {{list_sep}} [ \t]+
+            (?: {{name_prefix}} [ \t]+)?
             (?P<first>{{first_name}})    # more first names
         )*
-        \s+
+        [ \t]+
         (?:
             (?P<middle>{{middle_name}})  # middle name
-            \s+
+            [ \t]+
         )?
         (?P<last>{{last_name}})          # last name
     '''
 
     first_name = r'''
         (?:
-            {{name}} (?: \s* {{initial}} )*   # Name and multiple initials
+            {{name}} (?: [ \t]* {{initial}} )*   # Name and multiple initials
         |
-            {{initial}} \s+ {{name}}          # Single initial and a name
+            {{initial}} [ \t]+ {{name}}          # Single initial and a name
         |
-            (?: {{initial}} \s*){2,}          # At least 2 initials
+            (?: {{initial}} [ \t]*){2,}          # At least 2 initials
         )
-        (?=\s|,|$)                            # space or list sep must follow
+        (?=[ \t]|,|$)                            # space or list sep must follow
     '''
 
     middle_name = r'''
-        (?: {{name}} | {{initial}} )          # Any number of names or initials
-        (?: \s+ {{name}} | \s* {{initial}} )*
-        (?=\s|$)                              # space must follow (not list sep)
+        (?: {{name}} | {{initial}} )             # Any number of names or initials
+        (?: [ \t]+ {{name}} | [ \t]* {{initial}} )*
+        (?=[ \t]|$)                              # space must follow (not list sep)
     '''
 
     last_name = r'''
-        {{name}} (?: , \s* {{name_suffix}} )?
+        {{name}} (?: , [ \t]* {{name_suffix}} )?
     '''
 
     name = r'''
@@ -130,10 +130,10 @@ class MinutesScanner(scanner.Scanner):
         (?:(?:Co|Vice|Assistant|Honorary)[-\ ]?)*
         (?:
             # Regular officers
-            (?:(?:Chair|Arrang|Secret|Treasur|Chaplain|President)\w*(?:\s+(?:[Cc]ommittee|[Oo]fficer)\w*)?)
+            (?:(?:Chair|Arrang|Secret|Treasur|Chaplain|President)\w*(?:[ \t]+(?:[Cc]ommittee|[Oo]fficer)\w*)?)
         |
             # Committees
-            (?:(?:Memorial|Resolution|Locat|Finance)\w*\s+(?:[Cc]ommittee|[Oo]fficer)\w*)
+            (?:(?:Memorial|Resolution|Locat|Finance)\w*[ \t]+(?:[Cc]ommittee|[Oo]fficer)\w*)
         )
     '''
 
@@ -148,9 +148,9 @@ class MinutesScanner(scanner.Scanner):
                 on\ behalf\ of
             |
                 for\ the\ following
-            ):?\s+
+            ):?[ \t]+
         |
-            for\s+(?={{name}})
+            for[ \t]+(?={{name}})
     '''
 
     #=========================================================================#
@@ -159,14 +159,14 @@ class MinutesScanner(scanner.Scanner):
 
     song = r'''
         (?: {{song_title}} | {{song_number}} )
-        (?: \s* \( {{book_title}} \) )?
+        (?: [ \t]* \( {{book_title}} \) )?
     '''
 
     song_title = r'''
         [\u201c"]                      # open quote -- \u201c is a curly quote
         (?P<title>
-            (?:[^\u201d"\s]+\s+){,10}  # up to 10 words
-            [A-Z]\w*                   # plus an uppercase word
+            (?:[^\u201d" \t]+[ \t]+){,10}  # up to 10 words
+            [A-Z]\w*                       # plus an uppercase word
         )
         [\u201d"]                      # close quote -- \u201d is a curly quote
         (?![\w:-])
@@ -184,12 +184,12 @@ class MinutesScanner(scanner.Scanner):
 
     book_title = r'''
         (?P<book>
-            (?: [A-Z]\w+ \s* )+
+            (?: [A-Z]\w+ [ \t]* )+
         )
     '''
 
     ignore_song = r'''
-            (?:report\w*)\s+
+            (?:report\w*)[ \t]+
     '''
 
     #=========================================================================#
@@ -197,20 +197,20 @@ class MinutesScanner(scanner.Scanner):
     #=========================================================================#
     date = r'''
         # Sunday, March 20
-        {{weekday}} ,? \s+ {{month}} ,? \s+ \d+ {{day_suffix}}?
+        {{weekday}} ,? [ \t]+ {{month}} ,? [ \t]+ \d+ {{day_suffix}}?
     |
-        {{month}} ,? \s+ {{weekday}} ,? \s+ \d+ {{day_suffix}}?
+        {{month}} ,? [ \t]+ {{weekday}} ,? [ \t]+ \d+ {{day_suffix}}?
     |
         # Saturday before the third Sunday in March
         # Third Sunday in March
         # Third Sunday in March and the Saturday before
         # Third Sunday in March and the Saturday before
         # Third Sunday and the Saturday before in March
-        (?: {{weekday}} \s+ before \s+ the \s+ )?
-        {{ordinal}} \s+ {{weekday}}
-        {{relative_date}}?+ \s+ in \s+ {{month}} {{relative_date}}?
+        (?: {{weekday}} [ \t]+ before [ \t]+ the [ \t]+ )?
+        {{ordinal}} [ \t]+ {{weekday}}
+        {{relative_date}}?+ [ \t]+ in [ \t]+ {{month}} {{relative_date}}?
     |
-        {{month}} \s+ \d+ ,? \s+ {{year}}
+        {{month}} [ \t]+ \d+ ,? [ \t]+ {{year}}
     '''
 
     ordinal = r'''[Ff]irst|[Ss]econd|[Tt]hird|[Ff]ourth|[Ff]ifth|1st|2nd|3rd|4th|5th'''
@@ -224,8 +224,8 @@ class MinutesScanner(scanner.Scanner):
     day_suffix = r'''st|nd|rd|th'''
 
     relative_date = r'''
-        \s+ and \s+ (?:the \s+ )?
-        {{weekday}} \s+
+        [ \t]+ and [ \t]+ (?:the [ \t]+ )?
+        {{weekday}} [ \t]+
         (?:before|after)
     '''
 
@@ -239,7 +239,7 @@ class MinutesScanner(scanner.Scanner):
         [A-Z \t]{4,}     # All upper-case, at least 4 characters
         (?=$|\n)         # Must end w/ a paragraph break
     |
-        RECESS\s+
+        RECESS[ \t]+
     '''
 
     word = r'''
@@ -247,7 +247,7 @@ class MinutesScanner(scanner.Scanner):
         [AaPp]\.?[Mm]\.?
     |
         # Words with a single embedded non-word character
-        \w+([^\w\s\n]\w+)*
+        \w+([^\w\s]\w+)*
     |
         # Separators that do not require a space
         --
@@ -257,14 +257,14 @@ class MinutesScanner(scanner.Scanner):
     '''
 
     list_sep = r'''
-        \s*, (?: \s* and )? (?=\s) # comma with or without and
+        [ \t]*, (?: [ \t]* and )? (?=[ \t]) # comma with or without and
     |
-        \s* and (?=\s)                 # plain and
+        [ \t]* and (?=[ \t])                # plain and
     '''
 
     sentence = r'[.;!?]+'
 
     space = r'[^\S\n]+'
 
-    anything = r'[^\s.;!?\w]+|\w'
+    anything = r'[^ \t.;!?\w]+|\w'
 
