@@ -194,7 +194,7 @@ class MinutesScanner(scanner.Scanner):
     '''
 
     ignore_song = r'''
-            (?:report\w*)[ \t]+
+            (?:report\w*)[: \t]+
     '''
 
     #=========================================================================#
