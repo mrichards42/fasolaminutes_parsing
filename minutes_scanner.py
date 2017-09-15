@@ -138,6 +138,7 @@ class MinutesScanner(scanner.Scanner):
     '''
 
     ignore_leader = r'''
+            # Phrases
             (?:
                 in\ memory\ of
             |
@@ -150,7 +151,11 @@ class MinutesScanner(scanner.Scanner):
                 for\ the\ following
             ):?[ \t]+
         |
-            for[ \t]+(?={{name}})
+            # Single words (that should be followed by a name)
+            (?:
+                for
+            )[ \t]+(?= (?: {{name_prefix}} [ \t]+ )? {{first_name}} )
+
     '''
 
     #=========================================================================#
